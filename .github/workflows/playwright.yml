@@ -1,0 +1,69 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # Install and start backend
+      - name: Install backend dependencies
+        run: yarn install
+        working-directory: backend
+
+      - name: Start backend
+        run: |
+          yarn dev &
+          echo "Waiting for backend to be ready..."
+          while ! nc -z localhost 3000; do
+            sleep 1
+          done
+        working-directory: backend
+
+      # Install and start frontend
+      - name: Install frontend dependencies
+        run: yarn install
+        working-directory: frontend
+
+      - name: Start frontend
+        run: |
+          yarn start &
+          echo "Waiting for frontend to be ready..."
+          while ! nc -z localhost 8081; do
+            sleep 1
+          done
+        working-directory: frontend
+        env:
+          CI: true
+
+      # Install and run e2e tests
+      - name: Install e2e dependencies
+        run: yarn install
+        working-directory: e2e
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        working-directory: e2e
+
+      - name: Run Playwright tests
+        run: npx playwright test
+        working-directory: e2e
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 30
