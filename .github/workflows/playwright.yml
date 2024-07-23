@@ -11,23 +11,6 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
 
-    services:
-      backend:
-        runs-on: ubuntu-latest
-        container:
-          image: node:18
-        options: --network-alias backend
-        ports:
-          - 3000:3000
-        steps:
-          - uses: actions/checkout@v4
-          - name: Install backend dependencies
-            run: yarn install
-            working-directory: backend
-          - name: Start backend
-            run: yarn dev
-            working-directory: backend
-
     steps:
       - uses: actions/checkout@v4
       
@@ -35,23 +18,37 @@ jobs:
         with:
           node-version: 18
 
+      # Install and start backend
+      - name: Install backend dependencies
+        run: yarn install
+        working-directory: backend
+
+      - name: Start backend
+        run: |
+          yarn dev &
+          echo "Waiting for backend to be ready..."
+          while ! nc -z localhost 3000; do
+            sleep 1
+          done
+        working-directory: backend
+
+      # Install and start frontend
       - name: Install frontend dependencies
         run: yarn install
         working-directory: frontend
 
       - name: Start frontend
-        run: yarn start
-        working-directory: frontend
-        env:
-          CI: true
-
-      - name: Wait for frontend to be ready
         run: |
+          yarn start &
           echo "Waiting for frontend to be ready..."
           while ! nc -z localhost 8081; do
             sleep 1
           done
+        working-directory: frontend
+        env:
+          CI: true
 
+      # Install and run e2e tests
       - name: Install e2e dependencies
         run: yarn install
         working-directory: e2e
