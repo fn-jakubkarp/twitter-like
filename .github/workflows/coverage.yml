@@ -1,0 +1,56 @@
+name: Frontend Vitest Coverage
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'frontend/**'
+
+jobs:
+  frontend-coverage:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'  # Adjust this to match your project's Node.js version
+
+    - name: Install dependencies
+      run: yarn install
+
+    - name: Run coverage tests
+      run: yarn coverage
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-coverage-report
+        path: frontend/coverage/
+        retention-days: 30
+
+    - name: Check coverage thresholds
+      run: |
+        COVERAGE_SUMMARY=$(cat coverage/coverage-summary.json)
+        LINES=$(echo $COVERAGE_SUMMARY | jq '.total.lines.pct')
+        FUNCTIONS=$(echo $COVERAGE_SUMMARY | jq '.total.functions.pct')
+        BRANCHES=$(echo $COVERAGE_SUMMARY | jq '.total.branches.pct')
+        STATEMENTS=$(echo $COVERAGE_SUMMARY | jq '.total.statements.pct')
+
+        if (( $(echo "$LINES < 80" | bc -l) )) || \
+           (( $(echo "$FUNCTIONS < 80" | bc -l) )) || \
+           (( $(echo "$BRANCHES < 80" | bc -l) )) || \
+           (( $(echo "$STATEMENTS < 80" | bc -l) )); then
+          echo "Coverage thresholds not met"
+          exit 1
+        fi
