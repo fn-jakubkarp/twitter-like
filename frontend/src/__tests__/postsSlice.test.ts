@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest';
 import { Post, PostsState } from '@/src/types/postTypes';
 import { PostData } from '@/src/types/postTypes';
 import { configureStore } from '@reduxjs/toolkit';
-
+import { createTestStore } from './utils/createTestStore';
 import postsReducer from '../redux/slices/postsSlice';
 import { fetchPosts, addNewPost, updatePost, deletePost } from '../redux/thunks/postsThunks';
 
