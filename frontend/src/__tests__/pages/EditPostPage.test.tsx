@@ -1,9 +1,5 @@
 import { Provider } from 'react-redux';
-import {
-    MemoryRouter,
-    Route,
-    Routes,
-} from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { describe, it, expect, vi } from 'vitest';
 
