@@ -57,6 +57,7 @@ class ErrorBoundary extends React.Component<
                             variant="contained"
                             color="primary"
                             onClick={this.handleReload}
+                            data-testid="errorboundary-reload-btn"
                         >
                             Reload Page
                         </Button>
