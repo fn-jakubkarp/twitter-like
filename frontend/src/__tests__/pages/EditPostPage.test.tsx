@@ -2,7 +2,6 @@ import { Provider } from 'react-redux';
 import {
     MemoryRouter,
     Route,
-    BrowserRouter as Router,
     Routes,
 } from 'react-router-dom';
 
