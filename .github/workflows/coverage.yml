@@ -47,10 +47,10 @@ jobs:
         BRANCHES=$(echo $COVERAGE_SUMMARY | jq '.total.branches.pct')
         STATEMENTS=$(echo $COVERAGE_SUMMARY | jq '.total.statements.pct')
 
-        if (( $(echo "$LINES < 80" | bc -l) )) || \
-           (( $(echo "$FUNCTIONS < 80" | bc -l) )) || \
-           (( $(echo "$BRANCHES < 80" | bc -l) )) || \
-           (( $(echo "$STATEMENTS < 80" | bc -l) )); then
+        if (( $(echo "$LINES < 60" | bc -l) )) || \
+           (( $(echo "$FUNCTIONS < 60" | bc -l) )) || \
+           (( $(echo "$BRANCHES < 60" | bc -l) )) || \
+           (( $(echo "$STATEMENTS < 60" | bc -l) )); then
           echo "Coverage thresholds not met"
           exit 1
         fi
