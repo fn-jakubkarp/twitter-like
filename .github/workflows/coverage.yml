@@ -41,7 +41,7 @@ jobs:
 
     - name: Check coverage thresholds
       run: |
-        COVERAGE_SUMMARY=$(cat coverage/coverage-summary.json)
+        COVERAGE_SUMMARY=$(cat coverage/coverage-final.json)
         LINES=$(echo $COVERAGE_SUMMARY | jq '.total.lines.pct')
         FUNCTIONS=$(echo $COVERAGE_SUMMARY | jq '.total.functions.pct')
         BRANCHES=$(echo $COVERAGE_SUMMARY | jq '.total.branches.pct')
