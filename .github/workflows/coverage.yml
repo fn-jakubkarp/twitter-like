@@ -2,11 +2,11 @@ name: Frontend Vitest Coverage
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, jakub-karp ]
     paths:
       - 'frontend/**'
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, jakub-karp ]
     paths:
       - 'frontend/**'
 
